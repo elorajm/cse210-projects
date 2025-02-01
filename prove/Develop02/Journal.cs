@@ -1,73 +1,86 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 
-namespace classes{
-    public class Journal
+public class Journal
+{
+    private List<Entry> entries;
+    private int consecutiveDays;
+
+    public Journal()
     {
-        IDictionary<string, bool> prompts = new Dictionary<string, bool>();
-        public void AddKeyValuePair()
+        entries = new List<Entry>();
+        consecutiveDays = 0;
+    }
+
+    public void AddEntry(Entry entry)
+    {
+        entries.Add(entry);
+        consecutiveDays++;
+    }
+
+    public List<Entry> GetEntries()
+    {
+        return entries;
+    }
+
+    public double GetAverageEntriesPerWeek()
+    {
+        if (entries.Count == 0)
+            return 0;
+
+        TimeSpan totalTimeSpan = DateTime.Now - DateTime.Parse(entries[0].Date);
+        double totalDays = totalTimeSpan.TotalDays;
+
+        // Ensure there's at least 1 week if the journal is less than a week old
+        double totalWeeks = totalDays / 7;
+        if (totalWeeks < 1)
+            totalWeeks = 1; // At least 1 week if the duration is less than a week
+
+        return entries.Count / totalWeeks;
+    }
+
+    public int GetConsecutiveDays()
+    {
+        return consecutiveDays;
+    }
+
+    public void ResetConsecutiveDays()
+    {
+        consecutiveDays = 0;
+    }
+
+    public void SaveToFile(string filePath)
+    {
+        using (StreamWriter writer = new StreamWriter(filePath))
         {
-            prompts.Add("What is the best thing that happened today?", false);
-            prompts.Add("What is the worst thing that happened this week?", false);
-            prompts.Add("What am I grateful for today?", false);
-            prompts.Add("What did I learn today?", false);
-            prompts.Add("What is the most suprisong thing that happened today?", false);
-
-        }
-
-        public List<string> responses = new List<string>();
-
-        public void ShowMenu()
-        {
-            Console.WriteLine("Welcome to your journal");
-            Console.WriteLine("You have a whole 5 options to choose from:");
-            Console.WriteLine("1. Write an entry!");
-            Console.WriteLine("2. Display your journal and all its secrets.");
-            Console.WriteLine("3. Save what you have.");
-            Console.WriteLine("4. Load what youve written");
-            Console.WriteLine("5. Or lock that journal up tight and leave.");
-            Console.WriteLine("What would you like to do?");
-
-            
-        }
-
-        public void DisplayEntry()
-        {
-            
-            responses.ForEach(Console.WriteLine);
-        }
-
-        public void Write()
-        {
-            
-            
-            List<string> keys = new List<string>(prompts.Keys);
-            List<string> unansweredQuestion = new List<string>(keys.Where(question => this.prompts[question] == false));
-            string date = DateTime.Now.ToString("dd/MM/yyyy");
-            Random rndNum = new Random();
-            int listSize = unansweredQuestion.Count;
-            int rndIndex = rndNum.Next(0, listSize);
-            if (unansweredQuestion.Count == 0)
+            foreach (Entry entry in entries)
             {
-                Console.WriteLine("No more prompts available");
-                return;
+                writer.WriteLine($"{entry.Prompt}|{entry.Response}|{entry.Date}");
             }
-            string index  = rndIndex.ToString();
-            string randomQuestion = (unansweredQuestion[rndIndex]);
-            
-            prompts[randomQuestion] = true;
-            Console.WriteLine(randomQuestion);
-            
-
-            string answer = Console.ReadLine();
-            responses.Add($"Date: {date} - Prompt: {randomQuestion} - {answer}");
-
         }
+    }
 
-        public Journal()
+    public void LoadFromFile(string filePath)
+    {
+        entries.Clear(); 
+        using (StreamReader reader = new StreamReader(filePath))
         {
-
-        }      
-                
-
-    }  
+            string line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                string[] parts = line.Split('|');
+                if (parts.Length == 3)
+                {
+                    Entry entry = new Entry
+                    {
+                        Prompt = parts[0],
+                        Response = parts[1],
+                        Date = parts[2]
+                    };
+                    entries.Add(entry);
+                }
+            }
+        }
+    }
 }
