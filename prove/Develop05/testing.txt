@@ -1,0 +1,4 @@
+150
+SimpleGoal:|Be Happy|Smile at someone|10|True|10
+EternalGoal:|Read Scriptures|Read scriptures everyday|100|True|100
+ChecklistGoal:|Feed dogs|feed the dogs in the morning and evening.|40|20/1|0|False|40
