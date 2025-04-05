@@ -28,7 +28,7 @@ public class Swimming : Activity
     public override double GetDistance()
     {
         // Distance (km) = (Laps * Meters_per_Lap) / 1000 (m/km)
-        return (_laps * MetersPerLap) / 1000.0;
+        return _laps * MetersPerLap / 1000.0;
     }
 
     /// <summary>
@@ -41,7 +41,7 @@ public class Swimming : Activity
         double distance = GetDistance(); // Calculate distance first
         // Avoid division by zero if length is 0.
         if (LengthInMinutes == 0) return 0;
-        return (distance / LengthInMinutes) * 60.0;
+        return distance / LengthInMinutes * 60.0;
     }
 
     /// <summary>

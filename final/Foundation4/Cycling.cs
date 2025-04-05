@@ -25,7 +25,7 @@ public class Cycling : Activity
     public override double GetDistance()
     {
         // Convert minutes to hours by dividing by 60.
-        return (_speed * LengthInMinutes) / 60.0;
+        return _speed * LengthInMinutes / 60.0;
     }
 
     /// <summary>

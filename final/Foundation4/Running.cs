@@ -35,7 +35,7 @@ public class Running : Activity
     {
         // Avoid division by zero if length is 0.
         if (LengthInMinutes == 0) return 0;
-        return (_distance / LengthInMinutes) * 60.0;
+        return _distance / LengthInMinutes * 60.0;
     }
 
     /// <summary>
